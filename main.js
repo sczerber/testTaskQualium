@@ -1,59 +1,86 @@
-// var start = document.getElementById('button__start');
-// start.onclick = function() {
-//     animate();
-// };
+
+var rectangleSize = 20;
+var scores = 0;
+var rects = [getNewRect()];
+
+
+function getNewRect () {
+    return {
+        xCoord: getRandomNumber(0, 620),
+        yCoord: 0,
+        speed: getRandomNumber(1, 3),
+        color: generateColor()
+    }
+}
+
+
+function getRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function generateColor() {
+    return '#' + Math.floor(Math.random() * 16777215).toString(16)
+}
+
+function countScores() {
+    scores++;
+    document.getElementById('score').innerHTML = scores;
+}
+
+
+function animate(canvas) {
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientWidth);
+
+    rects.forEach((item, index) => {
+        ctx.fillStyle = item.color;
+    ctx.strokeStyle = item.color;
+    ctx.fillRect(item.xCoord, item.yCoord, rectangleSize, rectangleSize);
+    if(item.yCoord >= canvas.clientHeight) {
+        rects.splice(index, 1);
+    } else {
+        item.yCoord += item.speed;
+    }
+})
+    requestAnimationFrame(animate.bind(null, canvas));
+}
 
 function init() {
-    var currentPos = 0;
+    canvas = document.getElementById('canvas');
 
-    function getRandomNumber(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
+    canvas.addEventListener('mousedown', (e) => {
+        console.log(e)
+    var coords = {
+        x: e.offsetX,
+        y: e.offsetY
     }
-
-    function generateColor() {
-        return '#' + Math.floor(Math.random() * 16777215).toString(16)
+    rects.forEach((item, index) => {
+        if (item.xCoord <= coords.x && item.xCoord + rectangleSize >= coords.x && item.yCoord <= coords.y && item.yCoord + rectangleSize >= coords.y) {
+        rects.splice(index, 1);
+        countScores();
     }
-
-    var coordinationX = getRandomNumber(0, 620);
-    var speedOfRectangle = getRandomNumber(1, 7);
-    var colorOfRectangle = generateColor();
-    var scores = 0;
-
-    function count() {
-        scores++;
-        document.getElementById('score').innerHTML = scores;
-    }
-
-    function rectDown() {
-        currentPos = getRandomNumber(-200, 0);
-        coordinationX = getRandomNumber(0, 620);
-        speedOfRectangle = getRandomNumber(1, 7);
-        colorOfRectangle = generateColor();
-    }
-
-
-    function animate() {
-        var canvas = document.getElementById('canvas');
-        var ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientWidth);
-        ctx.fillStyle = colorOfRectangle;
-        ctx.strokeStyle = colorOfRectangle;
-        ctx.fillRect(coordinationX, currentPos, 20, 20);
-        currentPos += speedOfRectangle;
-        if (currentPos >= canvas.clientHeight) {
-            rectDown();
+})
+})
+    document.getElementById('start').onclick = function() {
+        if (scores === 0) {
+            animate(canvas);
+        } else {
+            rects = [];
+            scores = 0;
         }
-        canvas.addEventListener('mousedown', function (e) {
-            if (e.pageX > coordinationX && e.pageX < coordinationX + 40 && e.pageY > currentPos && e.pageY < currentPos + 40) {
-                count();
-                rectDown();
-            }
-        });
+    };
+    document.getElementById('stop').onclick = function() {
+        rects =[];
+        clearInterval(intervalId);
+    };
 
-        requestAnimationFrame(animate);
+
+
+    intervalId = setInterval(() => {
+            if (getRandomNumber(1, 3) === 3) {
+        rects.push(getNewRect());
     }
-
-    document.body.onload = animate;
-
+}, 100);
 }
-init();
+document.body.onload = init;
+
