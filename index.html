@@ -2,19 +2,24 @@
 <html>
   <head>
     <title> Qualium Systems Javascript test task </title>
-    <script type="text/javascript" src="main.js"></script>
+
     <style>
       canvas {        
         background: yellow;
+      }
+      body {
+        overflow: hidden;
+        margin: 0;
       }
     </style>
   </head>
   <body>
     <div>
-      <button> Start </button>
+      <button id="button__start"> Start </button>
       <button> Stop </button>
       <span> Score: <span id="score"> 0 </span> </span>
     </div>
-    <canvas width="640" height="480" id="canvas"></canvas>      
+    <canvas width="640" height="480" id="canvas"></canvas>
+    <script type="text/javascript" src="main.js"></script>
   </body>
 </html>
